@@ -1,4 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+
+import '../providers/api_url.dart';
 
 class CartItem {
   final String id;
@@ -34,7 +38,8 @@ class Cart with ChangeNotifier {
     return total;
   }
 
-  void addItem(String productId, double price, String title) {
+  void addItem(String productId, double price, String title) async {
+
     if (_items.containsKey(productId)) {
       _items.update(
         productId,
@@ -44,7 +49,9 @@ class Cart with ChangeNotifier {
           quantity: existingCartItem.quantity + 1,
           price: existingCartItem.price,
         ),
+
       );
+
     } else {
       _items.putIfAbsent(
         productId,
