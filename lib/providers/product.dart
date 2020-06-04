@@ -1,6 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 
-class Product with ChangeNotifier{
+import 'package:http/http.dart' as http;
+import 'package:shopapp/providers/api_url.dart';
+
+class Product with ChangeNotifier {
   final String id;
   final String title;
   final String description;
@@ -17,8 +22,28 @@ class Product with ChangeNotifier{
     this.isFavorite = false,
   });
 
-  void toggleFavoriteStatus(){
+  void _setFavValue(bool newValue){
+      isFavorite = newValue;
+      notifyListeners();
+  }
+
+  Future<void> toggleFavoriteStatus() async {
+    final oldStatus = isFavorite;
+    final url = ApiUrl(id: id).firebaseUrlEditProduct;
     isFavorite = !isFavorite;
     notifyListeners();
+    try {
+      final response = await http.patch(
+        url,
+        body: json.encode({
+          'isFavorite': isFavorite,
+        }),
+      );
+      if(response.statusCode >= 400){
+        _setFavValue(oldStatus);
+      }
+    } catch (error) {
+        _setFavValue(oldStatus);
+    }
   }
 }
