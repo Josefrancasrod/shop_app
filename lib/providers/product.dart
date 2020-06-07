@@ -27,9 +27,9 @@ class Product with ChangeNotifier {
       notifyListeners();
   }
 
-  Future<void> toggleFavoriteStatus() async {
+  Future<void> toggleFavoriteStatus(String token) async {
     final oldStatus = isFavorite;
-    final url = ApiUrl(id: id).firebaseUrlEditProduct;
+    final url = ApiUrl(id: id).firebaseUrlEditProduct + '?auth=$token';
     isFavorite = !isFavorite;
     notifyListeners();
     try {
