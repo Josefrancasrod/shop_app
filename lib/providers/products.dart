@@ -70,11 +70,11 @@ class Products with ChangeNotifier {
   //   notifyListeners();
   // }
 
-  Future<void> fetchAndSetProducts() async {
-    final url = ApiUrl().firebaseUrl + '?auth=$authToken';
+  Future<void> fetchAndSetProducts([bool filterByUser = false]) async {
+    final filterString = filterByUser ? 'orderBy="creatorId"&equalTo="$userId"' : '';
+    final url = ApiUrl().firebaseUrl + '?auth=$authToken&$filterString';
     try {
       final response = await http.get(url);
-      print(json.decode(response.body));
       final extractedData = json.decode(response.body) as Map<String, dynamic>;
       if(extractedData == null){
         return;
@@ -114,6 +114,7 @@ class Products with ChangeNotifier {
           'description': product.description,
           'price': product.price,
           'imageUrl': product.imageUrl,
+          'creatorId': userId,
         }),
       );
       final newProduct = Product(
